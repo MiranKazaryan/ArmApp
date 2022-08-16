@@ -1,0 +1,5 @@
+.header__links{
+    min-width: 160px;
+    justify-content: space-between;
+    display: flex;
+}
