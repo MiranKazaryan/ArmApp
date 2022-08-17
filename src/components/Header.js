@@ -10,7 +10,6 @@ function Header() {
   useEffect( () => {
     (async () => {
         const link = await fetch(`${url}${api_key}`).then(res => res.json()).then((res)=>{
-          console.log(res.url);
           setLink(res.url);
         });
     })()

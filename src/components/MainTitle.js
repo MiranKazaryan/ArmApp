@@ -1,9 +1,29 @@
 import Card from "./Card";
+import { useEffect, useState } from "react";
 import { CardContext } from "../contexts/CardContext";
 import styles from "../../styles/Home.module.css";
 
-function MainTitle({ cards }) {
-  console.log("cardsMain", cards);
+function MainTitle({ cards, onBtnClick}) {
+  const [checked, setChecked] = useState(false);
+  const [card, setCard] = useState({});
+
+  const [isActive, setActive] = useState(true);
+  const [isActiveLunar, setActiveLunar] = useState(false);
+  //переключатель классов
+  const toggleClass = () => {
+    isActive ? "" : toggleClasses();
+    isActiveLunar ? "" : toggleClasses();
+  };
+  //переключатель состояний
+  function toggleClasses() {
+    setActive(!isActive);
+    setActiveLunar(!isActiveLunar);
+  }
+
+  //функция отслеживающая выбор опасных астероидов
+  function changeCheckbox() {
+    setChecked(!checked);
+  }
 
   return (
     <>
@@ -12,22 +32,47 @@ function MainTitle({ cards }) {
         <div className={styles.mainBottom}>
           <div className={styles.mainBottom}>
             <p className={styles.mainText}>Отображать расстояние: &nbsp;</p>
-            <a className={styles.mainText} href="#">в километрах | &nbsp;</a>
-            <a className={styles.mainText} href="#">в лунных орбитах</a>
+            <div className={styles.btns}>
+              <button
+                className={isActive ? styles.mainBtnClicked : styles.mainBtn}
+                onClick={toggleClass}
+              >
+                в километрах | &nbsp;
+              </button>
+
+              <button
+                className={
+                  isActiveLunar ? styles.mainBtnClicked : styles.mainBtn
+                }
+                onClick={toggleClass}
+              >
+                в лунных орбитах
+              </button>
+            </div>
           </div>
-          <div className={styles.mainBottom}>
-            <input type="checkbox"></input>
+          <div className={styles.mainCheck}>
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={changeCheckbox}
+            ></input>
             <p className={styles.mainText}>Показать только опасные</p>
           </div>
         </div>
       </section>
       <section className={styles.photoGrid}>
         <ul className={styles.cards}>
-          {cards.map((card) => (
-            <CardContext.Provider value={card} key={card.id}>
-              <Card />
-            </CardContext.Provider>
-          ))}
+          {checked
+            ? cards.map((c, key) => {
+                return c.danger ? (
+                  <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick}/>
+                ) : (
+                  ""
+                );
+              })
+            : cards.map((c, key) => (
+                <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick}/>
+              ))}
         </ul>
       </section>
     </>
@@ -35,3 +80,15 @@ function MainTitle({ cards }) {
 }
 
 export default MainTitle;
+
+/*
+(
+  <CardContext.Provider value={card} key={card.id}>
+    <Card />
+  </CardContext.Provider>
+))*/
+
+/*
+{cards.map((c, key) => (
+  <Card card={c} key={c.id} />
+))}*/
