@@ -60,6 +60,17 @@
   font-size: 16px;
   line-height: 20px;
   text-align: right;
+  text-decoration-line: none;
+  color: #fff;
+  padding-right: 5px;
+}
+.headerLinkClicked{
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: right;
   text-decoration-line: underline;
   color: #fff;
   padding-right: 5px;
@@ -242,8 +253,33 @@ color:#fff;
 .cardButton:hover{
   cursor: pointer;
 }
+
 .cardImg{
   width: 93px;
   height: 95px;
   border-radius: 16px;
 }
+
+.btnSave{
+  font-family: 'Helvetica';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 11px;
+  line-height: 20px;
+  display: flex;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 220px;
+  height: 60px;
+  background: #186DD6;
+  border-radius: 24px;
+  margin: auto;
+  color:#fff;
+  }
+  .btnSave:hover{
+    cursor: pointer;
+  }

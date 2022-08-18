@@ -9,20 +9,21 @@ function MainTitle({ cards, onBtnClick}) {
 
   const [isActive, setActive] = useState(true);
   const [isActiveLunar, setActiveLunar] = useState(false);
-  //переключатель классов
-  const toggleClass = () => {
-    isActive ? "" : toggleClasses();
-    isActiveLunar ? "" : toggleClasses();
-  };
-  //переключатель состояний
-  function toggleClasses() {
-    setActive(!isActive);
-    setActiveLunar(!isActiveLunar);
-  }
 
   //функция отслеживающая выбор опасных астероидов
   function changeCheckbox() {
     setChecked(!checked);
+  }
+
+  function toggleKm(){
+    if(isActive){""} else{setActive(true);setActiveLunar(false)};
+    console.log("isActive",isActive);
+    console.log("isActiveLunar",isActiveLunar);
+  }
+  function toggleLunar(){
+    if(isActiveLunar){""}else{setActiveLunar(true);setActive(false);}
+    console.log("isActive",isActive);
+    console.log("isActiveLunar",isActiveLunar);
   }
 
   return (
@@ -35,7 +36,7 @@ function MainTitle({ cards, onBtnClick}) {
             <div className={styles.btns}>
               <button
                 className={isActive ? styles.mainBtnClicked : styles.mainBtn}
-                onClick={toggleClass}
+                onClick={toggleKm}
               >
                 в километрах | &nbsp;
               </button>
@@ -44,7 +45,7 @@ function MainTitle({ cards, onBtnClick}) {
                 className={
                   isActiveLunar ? styles.mainBtnClicked : styles.mainBtn
                 }
-                onClick={toggleClass}
+                onClick={toggleLunar}
               >
                 в лунных орбитах
               </button>
@@ -80,15 +81,3 @@ function MainTitle({ cards, onBtnClick}) {
 }
 
 export default MainTitle;
-
-/*
-(
-  <CardContext.Provider value={card} key={card.id}>
-    <Card />
-  </CardContext.Provider>
-))*/
-
-/*
-{cards.map((c, key) => (
-  <Card card={c} key={c.id} />
-))}*/

@@ -6,15 +6,17 @@ import safePath from "../../public/safe.png";
 import dangerPath from "../../public/danger.png";
 
 function Card({ card, mensuration, onBtnClick, isMain }) {
+  const [isClicked, setClicked] = useState(false);
   //функция клика на кнопку Уничтожить
   const handleBtnClick = () => {
-    console.log("1");
     onBtnClick(card);
+    setClicked(true);
   };
-  //const card = useContext(CardContext);
+  //дистанция в км/лунных орбитах
   const distance = mensuration
     ? `${card?.kilometers} км`
     : `${card?.lunarDistance} лунных орбит`;
+  //путь к картинке
   const imgPath = card?.danger ? dangerPath : safePath;
   const altImg = card?.danger ? "Опасен" : "Не опасен";
   return (
@@ -38,7 +40,7 @@ function Card({ card, mensuration, onBtnClick, isMain }) {
       </div>
       {isMain ? (
         <button className={styles.cardButton} onClick={handleBtnClick}>
-          Уничтожить
+          {isClicked ? "В заказе" : "Уничтожить"}
         </button>
       ) : (
         ""

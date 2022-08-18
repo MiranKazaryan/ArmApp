@@ -1,7 +1,6 @@
 import { createContext, useState,useEffect } from "react";
 
 const AstContext = createContext();
-//{arr:[],setArr:(a)=>{arr.push(a)}}
 
 export const AstContextProvider = ({children}) =>{
     const [arr,setArr] = useState([]);

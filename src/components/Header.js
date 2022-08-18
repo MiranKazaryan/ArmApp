@@ -2,21 +2,20 @@ import {useState, useEffect} from "react";
 import styles from "../../styles/Home.module.css";
 import Link from "next/link";
 
-function Header() {
-  const api_key = 'XAl4XWSGU8lDrnIKbxnc1hwUOsYNRfTJ95yhdr2H';
-  const url= 'https://api.nasa.gov/planetary/apod?api_key=';
-  const [link, setLink] = useState('');
-
-
-  useEffect( () => {
-    (async () => {
-        const link = await fetch(`${url}${api_key}`).then(res => res.json()).then((res)=>{
-          setLink(res.url);
-        });
-    })()
-    }, []
-    )
-
+function Header({link}) {
+  const [isActive, setActive] = useState(true);
+  const [isActiveOrd, setActiveOrd] = useState(false);
+//Проработать переключение кнопок при переключении
+  function toggleAst(){
+    if(isActive){""} else{setActive(true);setActiveOrd(false)};
+    console.log("isActive",isActive);
+    console.log("isActiveOrd",isActiveOrd);
+  }
+  function toggleOrd(){
+    if(isActiveOrd){""}else{setActiveOrd(true);setActive(false);}
+    console.log("isActive2",isActive);
+    console.log("isActiveOrd2",isActiveOrd);
+  }
   return (
     <section className={styles.header} id="img" style={{backgroundImage:`url(${link})`}}>
       <div className={styles.headerText}>
@@ -26,10 +25,10 @@ function Header() {
         </p>
       </div>
       <div className={styles.headerLinks}>
-        <Link href="/"><a className={styles.headerLink}>
+        <Link href="/"><a className={isActive ? styles.headerLinkClicked : styles.headerLink}   onClick={toggleAst}>
           Астероиды
         </a></Link>
-        <Link href="orders"><a className={styles.headerLink}>
+        <Link href="orders"><a className={isActiveOrd ? styles.headerLinkClicked : styles.headerLink}  onClick={toggleOrd}>
           Заказ
         </a></Link>
       </div>

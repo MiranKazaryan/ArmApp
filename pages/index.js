@@ -5,80 +5,65 @@ import Header from "../src/components/Header";
 import Footer from "../src/components/Footer";
 import MainTitle from "../src/components/MainTitle";
 import Card from "../src/components/Card";
-import { useState, useEffect,useContext } from "react";
-import AstContext from '../stores/AstContext';
+import { useState, useEffect, useContext } from "react";
+import AstContext from "../stores/AstContext";
 
 export default function Home() {
+  //расширяем объект Дата функцией добавления дней
   Date.prototype.addDays = function (days) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
   };
+  var options = { year: "numeric", month: "long", day: "numeric" };
   const date = new Date();
-
   const [cards, setCards] = useState([]);
   const [destroyCards, setDestroyCards] = useState([]);
   const [currentDate, setCurrentDate] = useState(date);
   const [fetching, setFetching] = useState(true);
-  const scrollHandler = (e) => {
-    if (
-      e.target.documentElement.scrollHeight -
-        (e.target.documentElement.scrollTop + window.innerHeight) <
-      100
-    ) {
-      console.log(scroll);
-      setFetching(true);
-    }
-  };
-  const {arr,setArr} = useContext(AstContext);
-//собираем все карточки на уничтожение
-  function handleCardDestroy(card){
-    console.log(card);
-    destroyCards.push(card);
-    console.log(destroyCards);
-    setArr(destroyCards);
-    console.log('contextArr',arr);
-  }
-
-
-
-  function formatNumber(num) {
-    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
-  }
-  var options = {  year: 'numeric', month: 'long', day: 'numeric' };
-
-  const api_key = "iNLNf43TJVIWwa5g2dhEmMAPOe7Pl5I6blVRKCVN";//"B4DQRI1Ab1o6heEM4WLk5arHlmHMpgcNil3e83Qp";
-  //const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${date.toLocaleDateString(
-  //  "en-ca"
- // )}&end_date=${date.toLocaleDateString("en-ca")}&api_key=`;
+  const [linkHead, setLinkHead] = useState("");
   const [link, setLink] = useState("");
+  const { arr, setArr } = useContext(AstContext);
+  const api_key = "iNLNf43TJVIWwa5g2dhEmMAPOe7Pl5I6blVRKCVN";
+  const urlHed = "https://api.nasa.gov/planetary/apod?api_key=";
+  const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${currentDate.toLocaleDateString(
+    "en-ca"
+  )}&end_date=${currentDate.toLocaleDateString("en-ca")}&api_key=${api_key}`;
 
+  //отрисовка картинки дня
+  useEffect(() => {
+    (async () => {
+      const link = await fetch(`${urlHed}${api_key}`)
+        .then((res) => res.json())
+        .then((res) => {
+          setLinkHead(res.url);
+        });
+    })();
+  }, []);
+  //отслеживаем скролл
   useEffect(() => {
     document.addEventListener("scroll", scrollHandler);
     return function () {
       document.removeEventListener("scroll", scrollHandler);
     };
   });
-
+  //обрабатываем объекты из запроса ко всем астероидам от текущей даты в бесконечность
   useEffect(() => {
     if (fetching) {
       (async () => {
         let asteroids = [];
-        const link = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${currentDate.toLocaleDateString("en-ca")}&end_date=${currentDate.toLocaleDateString("en-ca")}&api_key=${api_key}`)
+        const link = await fetch(url)
           .then((res) => res.json())
           .then((res) => {
-            console.log(res);
-            //console.log("res", res.links.next); //данные следующего дня
-           // let date2 = date.addDays(7);
-           // console.log(date2);  console.log(date.toLocaleDateString('de-DE', options));
             let nearEarthObjects = res.near_earth_objects;
-            console.log(res.nearEarthObjects);
             for (
               let i = 0;
-              i < nearEarthObjects[currentDate.toLocaleDateString("en-ca")].length;
+              i <
+              nearEarthObjects[currentDate.toLocaleDateString("en-ca")].length;
               i++
             ) {
-              let obj = nearEarthObjects[currentDate.toLocaleDateString("en-ca")][i];
+              let obj =
+                nearEarthObjects[currentDate.toLocaleDateString("en-ca")][i];
               let lunarDistance =
                 obj.close_approach_data[0].miss_distance.lunar;
               let kilometers =
@@ -86,7 +71,7 @@ export default function Home() {
               let card__danger = obj.is_potentially_hazardous_asteroid;
               let diameter = obj.absolute_magnitude_h;
               asteroids.push({
-                date: `${currentDate.toLocaleDateString('ru-RU',options)}`,
+                date: `${currentDate.toLocaleDateString("ru-RU", options)}`,
                 id: `${obj.id}`,
                 name: `Астероид ${obj.name}`,
                 lunarDistance: parseInt(lunarDistance),
@@ -95,13 +80,35 @@ export default function Home() {
                 kilometers: formatNumber(parseInt(kilometers)),
               });
             }
-            setCards([...cards,...asteroids]);
+            setCards([...cards, ...asteroids]);
             setCurrentDate(currentDate.addDays(1));
-          }
-          ).finally(()=>setFetching(false));
+          })
+          .finally(() => setFetching(false));
       })();
     }
   }, [fetching]);
+
+  //функция для отслеживание скролла
+  const scrollHandler = (e) => {
+    if (
+      e.target.documentElement.scrollHeight -
+        (e.target.documentElement.scrollTop + window.innerHeight) <
+      100
+    ) {
+      setFetching(true);
+    }
+  };
+
+  //собираем все карточки на уничтожение
+  function handleCardDestroy(card) {
+    destroyCards.push(card);
+    setArr(destroyCards);
+  }
+
+  //форматирование числа
+  function formatNumber(num) {
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1 ");
+  }
 
   return (
     <div className={styles.container}>
@@ -110,99 +117,9 @@ export default function Home() {
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header></Header>
+      <Header link={linkHead}></Header>
       <MainTitle cards={cards} onBtnClick={handleCardDestroy}></MainTitle>
       <Footer />
     </div>
   );
 }
-
-/*
-  const date = new Date();
-  const api_key = "B4DQRI1Ab1o6heEM4WLk5arHlmHMpgcNil3e83Qp";
-  const url = `https://api.nasa.gov/neo/rest/v1/feed?start_date=${date.toLocaleDateString("en-ca")}&end_date=${date.addDays(7).toLocaleDateString("en-ca")}&api_key=`;
-  const [link, setLink] = useState("");
-  const [cards, setCards] = useState([]);
-  useEffect(() => {
-    document.addEventListener("scroll", scrollHandler);
-    return function () {
-      document.removeEventListener("scroll", scrollHandler);
-    };
-  });
-  useEffect(() => {
-    (async () => {
-      let asteroids = [];
-      const link = await fetch(`${url}${api_key}`)
-        .then((res) => res.json())
-        .then((res) => {
-          console.log('res',res);
-          let date = new Date();
-          let date2 = date.addDays(7);
-          console.log(date2);
-          let nearEarthObjects = res.near_earth_objects;
-          let j = 0;
-          for(let j=0;j<7;j++){
-            for (let i = 0; i < nearEarthObjects[date.addDays(j).toLocaleDateString("en-ca")].length; i++) {
-              let obj = nearEarthObjects[date.addDays(j).toLocaleDateString("en-ca")][i];
-              let lunarDistance = obj.close_approach_data[0].miss_distance.lunar;
-              let kilometers =
-                obj.close_approach_data[0].miss_distance.kilometers;
-              let card__danger = obj.is_potentially_hazardous_asteroid;
-              let diameter = obj.absolute_magnitude_h;
-              asteroids.push({
-                date: `${date.addDays(j).toLocaleDateString("en-ca")}`,
-                id: `${obj.id}`,
-                name: `Астероид ${obj.name}`,
-                lunarDistance: parseInt(lunarDistance),
-                absoluteMag: diameter,
-                danger: card__danger,
-                kilometers: formatNumber(parseInt(kilometers)),
-              });
-            }
-          }
-            
-
-
-
-          setCards(asteroids);
-        });
-    })();
-  }, []);
-*/
-
-/* fetch(`${url}${api_key}`)
-    .then((res) => {
-      console.log(res);
-      return res.json();
-    })
-    .then((res) => {
-      let date = new Date().toLocaleDateString("en-ca");
-      let nearEarthObjects = res.near_earth_objects;
-      for (let i = 0; i < nearEarthObjects[date].length; i++) {
-        let obj = nearEarthObjects[date][i];
-        let lunarDistance = obj.close_approach_data[0].miss_distance.lunar;
-        let kilometers = obj.close_approach_data[0].miss_distance.kilometers;
-        let card__danger = obj.is_potentially_hazardous_asteroid;
-        let diameter = obj.absolute_magnitude_h;
-        /*setCards([
-          ...cards,
-          {
-            name: `Астероид ${obj.name}`,
-            lunarDistance: parseInt(lunarDistance),
-            absoluteMag: diameter,
-            danger: card__danger,
-            kilometers: formatNumber(parseInt(kilometers)),
-          },
-        ]);
-        asteroids.push({
-          name: `Астероид ${obj.name}`,
-          lunarDistance: parseInt(lunarDistance),
-          absoluteMag: diameter,
-          danger: card__danger,
-          kilometers: formatNumber(parseInt(kilometers)),
-        });
-      }
-      console.log(asteroids);
-      setCards([asteroids]);
-      console.log("cards", cards);
-    });*/
