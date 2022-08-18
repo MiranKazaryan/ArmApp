@@ -10,15 +10,13 @@
 Реализована корзина выбранных объектов для дальнейшего взаимодействия. 
 
 # Стек:
-* HTML
-* CSS
-* Git
-* Figma
-* JavaScript
-* Webpack
-* React
 * Next.js
+* React
+* JavaScript
 * NASA.API
+* Git
+* CSS
+* Figma 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
