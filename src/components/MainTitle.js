@@ -65,13 +65,13 @@ function MainTitle({ cards, onBtnClick}) {
           {checked
             ? cards.map((c, key) => {
                 return c.danger ? (
-                  <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick}/>
+                  <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick} isMain={true}/>
                 ) : (
                   ""
                 );
               })
             : cards.map((c, key) => (
-                <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick}/>
+                <Card card={c} key={c.id} mensuration={isActive} onBtnClick={onBtnClick} isMain={true}/>
               ))}
         </ul>
       </section>

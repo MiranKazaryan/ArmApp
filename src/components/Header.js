@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react";
 import styles from "../../styles/Home.module.css";
+import Link from "next/link";
 
 function Header() {
   const api_key = 'XAl4XWSGU8lDrnIKbxnc1hwUOsYNRfTJ95yhdr2H';
@@ -25,12 +26,12 @@ function Header() {
         </p>
       </div>
       <div className={styles.headerLinks}>
-        <a className={styles.headerLink} href="#">
+        <Link href="/"><a className={styles.headerLink}>
           Астероиды
-        </a>
-        <a className={styles.headerLink} href="#">
+        </a></Link>
+        <Link href="orders"><a className={styles.headerLink}>
           Заказ
-        </a>
+        </a></Link>
       </div>
     </section>
   );
